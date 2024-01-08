@@ -1,0 +1,6 @@
+"nrf24l01.obj",
+"main.obj",
+"Delay.obj",
+"uart.obj" 
+TO "congji1" 
+RAMSIZE(256) 

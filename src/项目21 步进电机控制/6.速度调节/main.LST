@@ -1,0 +1,189 @@
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 14:04:47 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-V51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52RD
+   3          *  名称：步进电机调速
+   4          *  公司：深圳市亚博软件开发有限公司      
+   5          *  晶振:11.0592MHZ
+   6          *  实验效果：本程序用于测试4相步进电机常规驱动 4个独立按键 分别控制加速、减速、开启、停止       
+   7                          数码管显示 01-18速度等级，数字越大，速度越大
+   8          ******************************************************************/
+   9          #include <reg52.h>
+  10          
+  11          #define dula P0         //段选信号的锁存器控制
+  12          sbit wei1=P2^4;
+  13          sbit wei2=P2^5;
+  14          sbit wei3=P2^6;
+  15          sbit wei4=P2^7;
+  16          
+  17          unsigned char code table[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,
+  18                                  0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
+  19          
+  20          sbit A1=P1^0; //定义步进电机连接端口
+  21          sbit B1=P1^1;
+  22          sbit C1=P1^2;
+  23          sbit D1=P1^3;
+  24          sbit k1 = P3^4;
+  25          sbit k2 = P3^5;
+  26          sbit k3 = P3^6;
+  27          sbit k4 = P3^7;
+  28          
+  29          
+  30          #define Coil_CD1 {A1=1;B1=1;C1=0;D1=0;}//CD相通电，其他相断电
+  31          #define Coil_AD1 {A1=0;B1=1;C1=1;D1=0;}//AD相通电，其他相断电
+  32          #define Coil_AB1 {A1=0;B1=0;C1=1;D1=1;}//AB相通电，其他相断电
+  33          #define Coil_BC1 {A1=1;B1=0;C1=0;D1=1;}//BC相通电，其他相断电
+  34          #define Coil_A1 {A1=0;B1=1;C1=1;D1=1;}//A相通电，其他相断电
+  35          #define Coil_B1 {A1=1;B1=0;C1=1;D1=1;}//B相通电，其他相断电
+  36          #define Coil_C1 {A1=1;B1=1;C1=0;D1=1;}//C相通电，其他相断电
+  37          #define Coil_D1 {A1=1;B1=1;C1=1;D1=0;}//D相通电，其他相断电
+  38          #define Coil_OFF {A1=1;B1=1;C1=1;D1=1;}//全部断电
+  39          
+  40          unsigned char Speed=1;
+  41          bit StopFlag;
+  42          void Display(unsigned char num);
+  43          void Init_Timer0(void);
+  44          /*------------------------------------------------
+  45          延时函数，毫秒级别
+  46          ------------------------------------------------*/
+  47          void delay(unsigned int xms)                            
+  48          {
+  49   1              unsigned int i,j;
+  50   1              for(i=xms;i>0;i--)                    //i=xms即延时约xms毫秒
+  51   1                      for(j=112;j>0;j--);
+  52   1      }
+  53          
+  54          
+  55          /*------------------------------------------------
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 14:04:47 PAGE 2   
+
+  56                              主函数
+  57          ------------------------------------------------*/
+  58          main()
+  59          {
+  60   1       unsigned int i=512;//旋转一周时间
+  61   1       //unsigned char num;
+  62   1       Init_Timer0();
+  63   1       Coil_OFF
+  64   1       while(1)  //正向
+  65   1        { 
+  66   2         if(k1 == 0)//第一个按键,速度等级增加
+  67   2              {
+  68   3                      delay(10);//延时10ms 消抖
+  69   3                      if(k1 == 0)//再次判断按键是否被按下
+  70   3                      {
+  71   4                              while(k1 == 0);//直到按键判断松开
+  72   4                              if(Speed<18)
+  73   4                                      Speed++;        
+  74   4                      }
+  75   3              }
+  76   2              else if(k2 == 0)//第二个按键，速度等级减小
+  77   2                      {
+  78   3                              delay(10);//延时10ms 消抖
+  79   3                              if(k2 == 0)//再次判断按键是否被按下
+  80   3                              {
+  81   4                                      while(k2 == 0);//直到按键判断松开
+  82   4                                      if(Speed>1)
+  83   4                                              Speed--;
+  84   4                              }
+  85   3                      }
+  86   2              else if(k3 == 0)//第三个按键，暂停
+  87   2                      {
+  88   3                              Coil_OFF
+  89   3                              StopFlag=1;
+  90   3                      }
+  91   2              else if(k4 == 0)//第四个按键，开启
+  92   2                      StopFlag=0;
+  93   2              Display(Speed);
+  94   2        }
+  95   1        
+  96   1      }
+  97          
+  98          /*------------------------------------------------
+  99           数码管显示函数，用于动态扫描数码管
+ 100          ------------------------------------------------*/
+ 101          void Display(unsigned char num)
+ 102          {
+ 103   1                      unsigned char shi,ge;
+ 104   1      
+ 105   1                      shi = num/10;
+ 106   1                      ge = num%10;
+ 107   1      
+ 108   1                      wei1=0;         //显示十位
+ 109   1                      wei2=0;
+ 110   1                      wei3=1;
+ 111   1                      wei4=0;
+ 112   1                      P0=table[shi];
+ 113   1                      delay(2);
+ 114   1                      
+ 115   1                      wei1=0;         //显示个位
+ 116   1                      wei2=0;
+ 117   1                      wei3=0;
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 14:04:47 PAGE 3   
+
+ 118   1                      wei4=1;
+ 119   1                      P0=table[ge];
+ 120   1                      delay(2);
+ 121   1      }
+ 122          /*------------------------------------------------
+ 123                              定时器初始化子程序
+ 124          ------------------------------------------------*/
+ 125          void Init_Timer0(void)
+ 126          {
+ 127   1       TMOD |= 0x01;    //使用模式1，16位定时器，使用"|"符号可以在使用多个定时器时不受影响                 
+ 128   1       //TH0=0x00;          //给定初值
+ 129   1       //TL0=0x00;
+ 130   1       EA=1;            //总中断打开
+ 131   1       ET0=1;           //定时器中断打开
+ 132   1       TR0=1;           //定时器开关打开
+ 133   1      }
+ 134          /*------------------------------------------------
+ 135                           定时器中断子程序
+ 136          ------------------------------------------------*/
+ 137          void Timer0_isr(void) interrupt 1 
+ 138          {
+ 139   1       static unsigned char times,i;
+ 140   1       TH0=(65536-1000)/256;            //重新赋值 1ms
+ 141   1       TL0=(65536-1000)%256;
+ 142   1       
+ 143   1       if(!StopFlag)
+ 144   1         {
+ 145   2        if(times==(20-Speed))//最大值18，所以最小间隔值20-18=2
+ 146   2         {
+ 147   3         times=0;
+ 148   3         switch(i)
+ 149   3             {
+ 150   4                  case 0:Coil_A1;i++;break;
+ 151   4                      case 1:Coil_B1;i++;break;
+ 152   4                      case 2:Coil_C1;i++;break;
+ 153   4                      case 3:Coil_D1;i++;break;
+ 154   4                      case 4:i=0;break;
+ 155   4                  default:break;
+ 156   4                 }
+ 157   3          }
+ 158   2       times++;
+ 159   2        }
+ 160   1      }
+ 161          
+ 162          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    286    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

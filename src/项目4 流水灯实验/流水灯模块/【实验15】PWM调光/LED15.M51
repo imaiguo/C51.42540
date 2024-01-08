@@ -1,0 +1,109 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        07/23/2015  11:42:42  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE main.obj TO LED15 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  main.obj (MAIN)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  LED15 (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0004H     UNIT         _DATA_GROUP_
+            IDATA   000CH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     006DH     UNIT         ?PR?MAIN?MAIN
+            CODE    0070H     0017H     UNIT         ?PR?_DELAY?MAIN
+            CODE    0087H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   LED15 (MAIN)
+
+
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?C_C51STARTUP                  -----    -----
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                  0008H    0004H
+  +--> ?PR?_DELAY?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  LED15 (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  B:0090H.0       PUBLIC        LED0
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:0003H         PUBLIC        main
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/23/2015  11:42:42  PAGE 2
+
+
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00C8H         PUBLIC        T2CON
+  C:007DH         PUBLIC        _Delay
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        CYCLE
+  D:000AH         SYMBOL        PWM_LOW
+  -------         ENDDO         
+  C:0003H         LINE#         20
+  C:0003H         LINE#         21
+  C:0003H         LINE#         23
+  C:000EH         LINE#         25
+  C:0011H         LINE#         27
+  C:0011H         LINE#         28
+  C:0011H         LINE#         29
+  C:0013H         LINE#         30
+  C:001AH         LINE#         31
+  C:002BH         LINE#         34
+  C:002DH         LINE#         35
+  C:0034H         LINE#         36
+  C:0034H         LINE#         37
+  C:0037H         LINE#         39
+  C:0041H         LINE#         40
+  C:0043H         LINE#         41
+  C:005AH         LINE#         43
+  C:005CH         LINE#         44
+  C:0063H         LINE#         45
+  C:0063H         LINE#         46
+  C:0066H         LINE#         48
+  -------         ENDPROC       MAIN
+  -------         PROC          L?0016
+  -------         ENDPROC       L?0016
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        t
+  C:007DH         LINE#         57
+  C:007DH         LINE#         58
+  C:007DH         LINE#         59
+  C:0086H         LINE#         60
+  -------         ENDPROC       _DELAY
+  -------         ENDMOD        MAIN
+
+Program Size: data=13.0 xdata=0 code=147
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,64 @@
+C51 COMPILER V9.00   DELAY                                                                 08/22/2015 15:12:52 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE DELAY
+OBJECT MODULE PLACED IN Delay.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE Delay.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：24L01无线接收（从机2）
+   4          *  公司：深圳市亚博软件开发有限公司       
+   5          *  日期：2015-6
+   6          *  晶振:11.0592MHZ
+   7          ******************************************************************/
+   8          /***************************延时函数****************/
+   9          void Delay(unsigned int t)
+  10          {
+  11   1        unsigned char x,y;
+  12   1        for(x=t;x>0;x--)
+  13   1         for(y=110;y>0;y--);
+  14   1      }
+  15          
+  16          /**********************************************
+  17             DS18B20专用延时子函数
+  18          **********************************************/
+  19          void DDelay(unsigned int t) 
+  20          { 
+  21   1              unsigned char n;
+  22   1              n=0; 
+  23   1              while(n<t) 
+  24   1              {
+  25   2                n++;
+  26   2              } 
+  27   1      }
+  28          
+  29          
+  30          
+  31          void Delay_x_ms(unsigned int x)
+  32          {
+  33   1           unsigned char i,j ;
+  34   1         while(x--)
+  35   1      {
+  36   2         for(i=22;i>0;i--)
+  37   2          for(j=10;j>0;j--);
+  38   2      }
+  39   1      
+  40   1      }
+  41          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     53    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,4 @@
+"STARTUP.obj",
+"main.obj" 
+TO "heart" 
+RAMSIZE(256) 

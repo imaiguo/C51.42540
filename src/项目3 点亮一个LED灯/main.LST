@@ -1,0 +1,40 @@
+C51 COMPILER V9.00   MAIN                                                                  06/16/2015 09:38:26 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /*****************************************
+   2          *实验效果 ：程序烧录进去后 第一个LED灯被点亮
+   3          ******************************************/
+   4          //#include"stc.h"
+   5          #include<reg52.h>
+   6          //#define led P1
+   7          sbit led1 = P1^0;
+   8          sbit led4 = P1^3;
+   9          void main()
+  10          {
+  11   1               while(1)
+  12   1               {
+  13   2                      led1 = 0;//点亮第一个LED灯
+  14   2                      //led = 0xfe;//1111 1110  最低位P1^0 = 0;
+  15   2                      led4 = 0;
+  16   2               }
+  17   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =      6    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

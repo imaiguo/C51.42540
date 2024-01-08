@@ -1,0 +1,96 @@
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 12:29:19 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：8*8点阵模块实验
+   4          *  公司：深圳市亚博软件开发有限公司       
+   5          *  日期：2015-7
+   6          *  晶振:11.0592MHZ
+   7          *  实验效果：显示爱心形状
+   8          ******************************************************************/
+   9          #include <reg52.h>
+  10          #include <intrins.h>
+  11          #define uchar unsigned char
+  12          #define uint  unsigned int
+  13          //定义Max7219端口
+  14          sbit Max7219_pinCLK = P2^2;//CLK
+  15          sbit Max7219_pinCS  = P2^1;//CS
+  16          sbit Max7219_pinDIN = P2^0;//DIN
+  17          uchar code disp1[8]=
+  18          {0x66,0x99,0x81,0x81,0x42,0x24,0x18,0x00};//爱心
+  19          
+  20          void Delay_xms(uint x)
+  21          {
+  22   1       uint i,j;
+  23   1       for(i=0;i<x;i++)
+  24   1        for(j=0;j<112;j++);
+  25   1      }
+  26          //--------------------------------------------
+  27          //功能：向MAX7219(U3)写入字节
+  28          //入口参数：DATA 
+  29          //出口参数：无
+  30          //说明：
+  31          void Write_Max7219_byte(uchar DATA)         
+  32          {
+  33   1              uchar i;    
+  34   1                      Max7219_pinCS=0;                
+  35   1                  for(i=8;i>=1;i--)
+  36   1                {               
+  37   2                  Max7219_pinCLK=0;
+  38   2                  Max7219_pinDIN=DATA&0x80;
+  39   2                  DATA=DATA<<1;
+  40   2                  Max7219_pinCLK=1;
+  41   2                 }                                 
+  42   1      }
+  43          //-------------------------------------------
+  44          //功能：向MAX7219写入数据
+  45          //入口参数：address、dat
+  46          //出口参数：无
+  47          //说明：
+  48          void Write_Max7219(uchar address,uchar dat)
+  49          { 
+  50   1           Max7219_pinCS=0;
+  51   1               Write_Max7219_byte(address);           //写入地址，即数码管编号
+  52   1           Write_Max7219_byte(dat);               //写入数据，即数码管显示数字 
+  53   1               Max7219_pinCS=1;                        
+  54   1      }
+  55          
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 12:29:19 PAGE 2   
+
+  56          void Init_MAX7219(void)
+  57          {
+  58   1       Write_Max7219(0x09, 0x00);       //译码方式：BCD码
+  59   1       Write_Max7219(0x0a, 0x03);       //亮度 
+  60   1       Write_Max7219(0x0b, 0x07);       //扫描界限；8个数码管显示
+  61   1       Write_Max7219(0x0c, 0x01);       //掉电模式：0，普通模式：1
+  62   1       Write_Max7219(0x0f, 0x00);       //显示测试：1；测试结束，正常显示：0
+  63   1      }
+  64          void main(void)
+  65          {
+  66   1       uchar i;
+  67   1       Delay_xms(50);
+  68   1       Init_MAX7219();  
+  69   1       for(i=1;i<9;i++)
+  70   1          Write_Max7219(i,disp1[i-1]); 
+  71   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    126    ----
+   CONSTANT SIZE    =      8    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

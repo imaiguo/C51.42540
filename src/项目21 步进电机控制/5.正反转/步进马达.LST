@@ -1,0 +1,101 @@
+C51 COMPILER V9.00   ²½½__í´ï                                                              08/22/2015 14:00:39 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE ²½½__í´ï
+OBJECT MODULE PLACED IN ²½½øÂí´ï.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE ²½½øÂí´ï.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /***********************************************************************************
+   2          *  ±êÌâ:  ²½½øµç»úÊÔÑéÎå£¨Õý×ªÒ»ÏÂ ·´×ªÒ»ÏÂ£©                                                                      *
+   3          *                                                                                                                                                                  *
+   4          *    Í¨¹ý±¾Àý³ÌÁË½â²½½øÂí´ïÊ¹ÓÃ¼°Çý¶¯³ÌÐò±àÐ´                                                                      *
+   5          *;   µ¥Ë«°ËÅÄ¹¤×÷·½Ê½£º                                                            *
+   6          *;   A-AB-B-BC-C-CD-D-DA                                                                                                                   *
+   7          *                                                                                  *                              
+             -                                                                                         *
+   8          **************************************************************************************/  
+   9          //½ÓÏß·½·¨£ºÇëÄãÒ»¶¨Òª¿´£¬²½½øµç»ú¶Å°îÏß½Ó·½·¨ ²½½øµç»úÄ£¿éÉÏ¡°-¡±½Óµ½¿ª·¢°åÉÏµÄGND ¡°+½ÓVCC
+  10          //IN1~IN4 ·Ö±ð½Óµ½P1.0~P1.3¡±  
+  11           
+  12           #include "reg52.h"
+  13          
+  14           void delay(unsigned int t);
+  15          
+  16           //Motor
+  17          sbit F1 = P1^0;
+  18          sbit F2 = P1^1;
+  19          sbit F3 = P1^2;
+  20          sbit F4 = P1^3;
+  21          
+  22          unsigned char code FFW[8]={0xfe,0xfc,0xfd,0xf9,0xfb,0xf3,0xf7,0xf6}; //·´×ª
+  23          unsigned char code FFZ[8]={0xf6,0xf7,0xf3,0xfb,0xf9,0xfd,0xfc,0xfe}; //Õý×ª
+  24          unsigned int  K;
+  25          
+  26          
+  27          /**********************************************************************
+  28          *                                                                                                                                         *
+  29          *                       ²½½øµç»úÇý¶¯                                                              *
+  30          *                                                                                                                                         *
+  31          ***********************************************************************/
+  32          void  motor_ffw()
+  33           { 
+  34   1         unsigned char i;
+  35   1         unsigned int  j;
+  36   1              for (j=0; j<64; j++)
+  37   1          { 
+  38   2      
+  39   2            for (i=0; i<8; i++)
+  40   2              {
+  41   3                if(K==1) P1 = FFW[i]&0x1f;  //È¡Êý¾Ý
+  42   3                        if(K==2) P1 = FFZ[i]&0x1f;
+  43   3                delay(8);                   //µ÷½Ú×ªËÙ
+  44   3              }
+  45   2           } 
+  46   1       }
+  47          
+  48          /******************************************************
+  49          *
+  50          *                    ÑÓÊ±³ÌÐò
+  51          *
+  52          ********************************************************/
+  53           void delay(unsigned int t)
+  54          {                           
+C51 COMPILER V9.00   ²½½__í´ï                                                              08/22/2015 14:00:39 PAGE 2   
+
+  55   1         unsigned int k;
+  56   1         while(t--)
+  57   1         {
+  58   2           for(k=0; k<80; k++)
+  59   2           { }
+  60   2         }
+  61   1      }
+  62          
+  63          
+  64          main() 
+  65           { 
+  66   1          while(1)
+  67   1              {
+  68   2               K=1;
+  69   2               motor_ffw();
+  70   2               K=2;
+  71   2               motor_ffw();
+  72   2      
+  73   2               }
+  74   1      }
+  75          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    128    ----
+   CONSTANT SIZE    =     16    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

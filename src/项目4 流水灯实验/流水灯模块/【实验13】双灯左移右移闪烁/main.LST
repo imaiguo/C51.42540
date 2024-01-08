@@ -1,0 +1,96 @@
+C51 COMPILER V9.00   MAIN                                                                  07/23/2015 11:41:46 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：流水灯模块实验
+   4          *  公司：深圳市亚博软件开发有限公司    
+   5          *  日期：2015-6
+   6          *  晶振:11.0592MHZ
+   7          *  说明：免费开源，不提供源代码分析.
+   8          ******************************************************************/
+   9          #include<reg52.h> //包含头文件，一般情况不需要改动，
+  10                            //头文件包含特殊功能寄存器的定义
+  11          
+  12          void Delay(unsigned int t); //函数声明
+  13          
+  14          /*------------------------------------------------
+  15                              主函数
+  16          ------------------------------------------------*/
+  17          void main (void)
+  18          {
+  19   1                        
+  20   1      unsigned char i;  //定义一个无符号字符型局部变量 i 取值范围 0~255
+  21   1      unsigned char temp;//定义临时变量用于转换
+  22   1      
+  23   1              P1=0xFF;//P1口置1
+  24   1              
+  25   1      while (1)          //主循环
+  26   1        {
+  27   2       temp=0xfc;
+  28   2       P1=temp;
+  29   2       for(i=0;i<7;i++)   //加入 for循环，表明for循环大括号
+  30   2                          //中的程序循环执行7次
+  31   2        {
+  32   3        Delay(50000);      //调用延时程序；更改延时数字可
+  33   3                           //以更改延时长度；用于改变闪烁频率
+  34   3        temp<<=1;
+  35   3        temp=temp|0x01;    //也可以直接把temp换成P1
+  36   3        P1=temp;           //之所以加入temp做中间变量，转换
+  37   3                           //完成后直接赋值到端口，防止直接
+  38   3                           //操作端口造成的短暂闪烁
+  39   3        }
+  40   2       
+  41   2       temp=0x3f;
+  42   2       P1=temp;
+  43   2       for(i=0;i<7;i++)   //加入 for循环，表明for循环大括号
+  44   2                          //中的程序循环执行7次
+  45   2        {
+  46   3        Delay(50000);      //调用延时程序；更改延时数字可以
+  47   3                           //更改延时长度；用于改变闪烁频率
+  48   3        temp>>=1;
+  49   3        temp|=0x80;        //等效于 temp=temp|0x80
+  50   3        P1=temp;
+  51   3        }
+  52   2      
+  53   2       for(i=0;i<3;i++)   //加入 for循环，表明for循环大括号
+  54   2                          //中的程序循环执行3次
+  55   2        {
+C51 COMPILER V9.00   MAIN                                                                  07/23/2015 11:41:46 PAGE 2   
+
+  56   3        P1=0xff;
+  57   3        Delay(50000);
+  58   3        P1=0x00;
+  59   3        Delay(50000);
+  60   3        }                //主循环中添加其他需要一直工作的程序
+  61   2       }
+  62   1      }
+  63          /*------------------------------------------------
+  64           延时函数，含有输入参数 unsigned int t，无返回值
+  65           unsigned int 是定义无符号整形变量，其值的范围是
+  66           0~65535
+  67          ------------------------------------------------*/
+  68          void Delay(unsigned int t)
+  69          {
+  70   1       while(--t);
+  71   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    109    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

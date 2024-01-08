@@ -1,0 +1,43 @@
+C51 COMPILER V9.00   MAIN                                                                  06/30/2015 00:39:19 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /************************************
+   2          *实验名：数码管静态显示
+   3          *实验效果：第一个数码管显示字符“b”
+   4          ************************************/
+   5          #include<reg52.h>
+   6          #define duan P0
+   7          sbit wei1 = P2^4;//定义第一位数码管
+   8          sbit wei2 = P2^5;//定义第二位数码管
+   9          sbit wei3 = P2^6;//定义第三位数码管
+  10          sbit wei4 = P2^7;//定义第四位数码管
+  11          
+  12          void main()
+  13          {
+  14   1              wei1 = 1;
+  15   1              wei2 = 0;
+  16   1              wei3 = 0;
+  17   1              wei4 = 0;
+  18   1              duan = 0x7c;//0111 1100 "b"
+  19   1              while(1);
+  20   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     13    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

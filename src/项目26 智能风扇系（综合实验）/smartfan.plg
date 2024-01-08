@@ -1,0 +1,35 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+I:\亚博智能 MINI51开发套件资料\5、套件传感器模块\12.智能风扇系统（综合实验）\智能风扇\smartfan.uvproj
+Project File Date:  08/19/2015
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling 18b20.c...
+compiling delay.c...
+compiling keyscan.c...
+KEYSCAN.C(52): warning C291: not every exit path returns a value
+compiling lcd1602.c...
+compiling main.c...
+compiling adda.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?IRCORDPRO?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?IR_WORK?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?EX0INIT?MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_PCF8591_DACONVERSION?ADDA
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_TO_ASCII?ADDA
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?_WRITEBYTE?18B20
+    CALLER1: ?PR?TIMER0_ISR?MAIN
+    CALLER2: ?C_C51STARTUP
+Program Size: data=119.6 xdata=0 code=2558
+creating hex file from "smartfan"...
+"smartfan" - 0 Error(s), 7 Warning(s).

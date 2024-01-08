@@ -1,0 +1,21 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+I:\亚博智能 MINI51开发板光盘资料\6、相关例程\2、配套视频教程源码\第9讲 外部中断低电平触发\int0.uvproj
+Project File Date:  07/04/2015
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=33
+creating hex file from "int0"...
+"int0" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=97
+creating hex file from "int0"...
+"int0" - 0 Error(s), 0 Warning(s).

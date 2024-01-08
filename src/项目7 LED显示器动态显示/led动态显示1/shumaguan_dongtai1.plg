@@ -1,0 +1,25 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+I:\亚博智能 MINI51开发板光盘资料\6、相关例程\2、配套视频教程源码\第7讲 数码管动态显示1\shumaguan_dongtai1.uvproj
+Project File Date:  07/01/2015
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling main.c...
+MAIN.C(14): error C129: missing ';' before 'code'
+Target not created
+Build target 'Target 1'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=49
+creating hex file from "shumaguan_dongtai1"...
+"shumaguan_dongtai1" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+compiling main.c...
+linking...
+Program Size: data=9.0 xdata=0 code=134
+creating hex file from "shumaguan_dongtai1"...
+"shumaguan_dongtai1" - 0 Error(s), 0 Warning(s).

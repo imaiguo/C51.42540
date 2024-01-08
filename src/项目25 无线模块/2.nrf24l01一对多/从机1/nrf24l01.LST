@@ -1,0 +1,305 @@
+C51 COMPILER V9.00   NRF24L01                                                              08/22/2015 15:12:09 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE NRF24L01
+OBJECT MODULE PLACED IN nrf24l01.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE nrf24l01.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51ÊµÑé¿ª·¢°åÀý³Ì************************
+   2          *  Æ½Ì¨£ºBST-M51 + Keil U4 + STC89C52
+   3          *  Ãû³Æ£º24L01ÎÞÏß½ÓÊÕ£¨´Ó»ú1£©
+   4          *  ¹«Ë¾£ºÉîÛÚÊÐÑÇ²©Èí¼þ¿ª·¢ÓÐÏÞ¹«Ë¾       
+   5          *  ÈÕÆÚ£º2015-6
+   6          *  ¾§Õñ:11.0592MHZ
+   7          ******************************************************************/
+   8          #include<reg52.h>
+   9          #include"NRF24L01.h"
+  10          #include"Delay.h"
+  11          #include"uart.h"
+  12          
+  13          
+  14          sbit CE=P1^0;  //RX/TXÄ£Ê½Ñ¡Ôñ¶Ë        
+  15          sbit SCLK=P1^1; //SPIÊ±ÖÓ¶Ë                        
+  16          sbit MISO=P1^2; //SPIÖ÷»úÊä³ö´Ó»úÊä³ö¶Ë  
+  17          sbit CSN=P1^3; //SPIÆ¬Ñ¡¶Ë//¾ÍÊÇSS        
+  18          sbit MOSI=P1^4; //SPIÖ÷»úÊä³ö´Ó»úÊäÈë¶Ë  
+  19          sbit IRQ=P1^5; //¿ÉÆÁ±ÎÖÐ¶Ï¶Ë                    
+  20          sbit wei1=P2^4;
+  21          sbit wei2=P2^5;
+  22          sbit wei3=P2^6;
+  23          sbit wei4=P2^7;
+  24          
+  25          sbit buzzer = P2^3 ;
+  26          
+  27          unsigned char RxData_Buf0[RX_DATA_WITDH];                       //´æ´¢Í¨µÀ0½ÓÊÕµ½µÄÊý¾Ý£¬Ö÷»ú·¢ËÍ¹ýÀ´µÄ
+  28          
+  29          unsigned char  code Rx_Addr1[RX_ADDR_WITDH]={0xc1,0xc2,0xc2,0xc2,0xc2}; 
+  30           
+  31          unsigned char  code Tx_Addr1[TX_ADDR_WITDH]={0xc1,0xc2,0xc2,0xc2,0xc2};//·¢ËÍµØÖ·
+  32          
+  33          
+  34          /*****************×´Ì¬±êÖ¾*****************************************/
+  35          unsigned char bdata sta;   //×´Ì¬±êÖ¾
+  36          sbit RX_DR=sta^6;
+  37          sbit TX_DS=sta^5;
+  38          sbit MAX_RT=sta^4;
+  39          
+  40          
+  41          /**********************NRF24L01³õÊ¼»¯º¯Êý*******************************/
+  42          void NRF24L01Int()
+  43          {
+  44   1       
+  45   1              CE  = 0;        // ´ý»ú
+  46   1              CSN = 1;        // SPI½ûÖ¹
+  47   1              SCLK= 0;        // SPIÊ±ÖÓÖÃµÍ
+  48   1              IRQ = 1;        // ÖÐ¶Ï¸´Î»
+  49   1      }
+  50          
+  51          /**********************ÊýÂë¹ÜÏÔÊ¾*****************************/
+  52          unsigned char Shumaguan(unsigned char x)
+  53          {
+  54   1                              wei1=1;
+  55   1                              wei2=0;
+C51 COMPILER V9.00   NRF24L01                                                              08/22/2015 15:12:09 PAGE 2   
+
+  56   1                              wei3=0;
+  57   1                              wei4=0;
+  58   1                              P0=x;      
+  59   1      }
+*** WARNING C173 IN LINE 59 OF NRF24L01.C: missing return-expression
+  60          
+  61          /**************************************************
+  62          º¯Êý£ºNRFSPI(uchar date)
+  63          
+  64          ÃèÊö£º
+  65              ¸ù¾ÝSPIÐ­Òé£¬Ð´Ò»×Ö½ÚÊý¾Ýµ½nRF24L01£¬Í¬Ê±´ÓnRF24L01
+  66                  ¶Á³öÒ»×Ö½Ú
+  67          /**************************************************/
+  68          unsigned char NRFSPI(unsigned char date)
+  69          {
+  70   1          unsigned char i;
+  71   1              for(i=0;i<8;i++)          // Ñ­»·8´Î
+  72   1              {
+  73   2                MOSI = (date & 0x80);    // byte×î¸ßÎ»Êä³öµ½MOSI
+  74   2                date<<=1;                // µÍÒ»Î»ÒÆÎ»µ½×î¸ßÎ»
+  75   2                SCLK=1;                              // À­¸ßSCK£¬nRF24L01´ÓMOSI¶ÁÈë1Î»Êý¾Ý£¬Í¬Ê±´ÓMISOÊä³ö1Î»Êý¾Ý
+  76   2                date |= MISO;            // ¶ÁMISOµ½byte×îµÍÎ»
+  77   2                SCLK=0;                  // SCKÖÃµÍ
+  78   2              }
+  79   1          return(date);               // ·µ»Ø¶Á³öµÄÒ»×Ö½Ú
+  80   1      }
+  81          
+  82          
+  83          /**************************************************
+  84          º¯Êý£ºNRFReadReg(uchar RegAddr)
+  85          
+  86          ÃèÊö£º
+  87              ´Óreg¼Ä´æÆ÷¶ÁÒ»×Ö½Ú
+  88          /**************************************************/
+  89          unsigned char NRFReadReg(unsigned char RegAddr)
+  90          {
+  91   1         unsigned char BackDate;
+  92   1         CSN=0;                          //CSNÖÃµÍ£¬¿ªÊ¼´«ÊäÊý¾Ý
+  93   1         NRFSPI(RegAddr);                //Ð´¼Ä´æÆ÷µØÖ·, Ñ¡Ôñ¼Ä´æÆ÷
+  94   1         BackDate=NRFSPI(0x00);          //È»ºó´Ó¸Ã¼Ä´æÆ÷¶ÁÊý¾Ý  
+  95   1         CSN=1;                                                  // CSNÀ­¸ß£¬½áÊøÊý¾Ý´«Êä
+  96   1         return(BackDate);               // ·µ»Ø¼Ä´æÆ÷Êý¾Ý
+  97   1      }
+  98          
+  99          
+ 100          
+ 101          /**************************************************
+ 102          º¯Êý£ºNRFWriteReg(uchar RegAddr,uchar date)
+ 103          
+ 104          ÃèÊö£º
+ 105              Ð´Êý¾Ývalueµ½reg¼Ä´æÆ÷
+ 106          /**************************************************/
+ 107          unsigned char NRFWriteReg(unsigned char RegAddr,unsigned char date)
+ 108          {
+ 109   1         unsigned char BackDate;
+ 110   1         CSN=0;                        // CSNÖÃµÍ£¬¿ªÊ¼´«ÊäÊý¾Ý
+ 111   1         BackDate=NRFSPI(RegAddr);     // Ñ¡Ôñ¼Ä´æÆ÷£¬Í¬Ê±·µ»Ø×´Ì¬×Ö
+ 112   1         NRFSPI(date);                 // È»ºóÐ´Êý¾Ýµ½¸Ã¼Ä´æÆ÷
+ 113   1         CSN=1;
+ 114   1         return(BackDate);
+ 115   1      }
+ 116          
+C51 COMPILER V9.00   NRF24L01                                                              08/22/2015 15:12:09 PAGE 3   
+
+ 117          
+ 118          
+ 119          
+ 120          /**************************************************
+ 121          º¯Êý£ºNRFRead_Buf(uchar RegAddr,uchar *RxDate,uchar DateLen)
+ 122                              //¼Ä´æÆ÷µØÖ·//¶ÁÈ¡Êý¾Ý´æ·Å±äÁ¿//¶ÁÈ¡Êý¾Ý³¤¶È
+ 123          RX                      //ÓÃÓÚ½ÓÊÕ
+ 124          ÃèÊö£º
+ 125              ´Óreg¼Ä´æÆ÷¶Á³öbytes¸ö×Ö½Ú£¬Í¨³£ÓÃÀ´¶ÁÈ¡½ÓÊÕÍ¨µÀ
+ 126                  Êý¾Ý»ò½ÓÊÕ/·¢ËÍµØÖ·
+ 127          /**************************************************/
+ 128          unsigned char NRFRead_Buf(unsigned char RegAddr,unsigned char *RxDate,unsigned char DateLen)
+ 129          { 
+ 130   1          unsigned char BackDate,i;
+ 131   1              CSN=0;                           //Æô¶¯Ê±Ðò
+ 132   1              BackDate=NRFSPI(RegAddr);        //Ð´ÈëÒª¶ÁÈ¡µÄ¼Ä´æÆ÷µØÖ·£¬Í¬Ê±·µ»Ø×´Ì¬×Ö
+ 133   1              for(i=0;i<DateLen;i++)           //¶ÁÈ¡Êý¾Ý
+ 134   1                {
+ 135   2                   RxDate[i]=NRFSPI(0);                // Öð¸ö×Ö½Ú´ÓnRF24L01¶Á³ö
+ 136   2                } 
+ 137   1          CSN=1;
+ 138   1         return(BackDate); 
+ 139   1      }
+ 140          
+ 141          
+ 142          
+ 143          
+ 144          /**************************************************
+ 145          º¯Êý£ºNRFWrite_Buf(uchar RegAddr,uchar *TxDate,uchar DateLen)
+ 146                              //¼Ä´æÆ÷µØÖ·//Ð´ÈëÊý¾Ý´æ·Å±äÁ¿//¶ÁÈ¡Êý¾Ý³¤¶È
+ 147          TX                      //ÓÃÓÚ·¢ËÍ
+ 148          ÃèÊö£º
+ 149              °ÑpBuf»º´æÖÐµÄÊý¾ÝÐ´Èëµ½nRF24L01£¬Í¨³£ÓÃÀ´Ð´Èë·¢
+ 150                  ÉäÍ¨µÀÊý¾Ý»ò½ÓÊÕ/·¢ËÍµØÖ·
+ 151          /**************************************************/
+ 152          unsigned char NRFWrite_Buf(unsigned char RegAddr,unsigned char *TxDate,unsigned char DateLen)
+ 153          {
+ 154   1         unsigned char BackDate,i;
+ 155   1         CSN=0;
+ 156   1         BackDate=NRFSPI(RegAddr);     // Ñ¡Ôñ¼Ä´æÆ÷£¬Í¬Ê±·µ»Ø×´Ì¬×Ö
+ 157   1         for(i=0;i<DateLen;i++)        //Ð´ÈëÊý¾Ý
+ 158   1           {
+ 159   2                  NRFSPI(*TxDate++);
+ 160   2               }   
+ 161   1         CSN=1;
+ 162   1         return(BackDate);
+ 163   1      }
+ 164          
+ 165          
+ 166          
+ 167          
+ 168          
+ 169          
+ 170          /********************************************************* 
+ 171          *                                                                                                                *
+ 172          *                                                                                                                *
+ 173          ************NRFÉèÖÃÎª½ÓÊÕÄ£Ê½²¢½ÓÊÕÊý¾Ý*******************
+ 174          *                                                                                                                *
+ 175          *                                                                                                                *
+ 176          *********************************************************/
+ 177          
+ 178          void NRFSetRXMode()                                                                                                        //Ö÷Òª½ÓÊÕÄ£Ê½
+C51 COMPILER V9.00   NRF24L01                                                              08/22/2015 15:12:09 PAGE 4   
+
+ 179          {
+ 180   1              CE=0;   
+ 181   1      
+ 182   1      
+ 183   1              NRFWrite_Buf(WRITE_REG + RX_ADDR_P1 , Tx_Addr1 , TX_ADDR_WITDH);  // ½ÓÊÕÉè±¸½ÓÊÕÍ¨µÀ0 ºÍ ·¢ËÍÉè±¸µÄ·¢Ë
+             -ÍµØÖ·ÏàÍ¬             
+ 184   1              NRFWriteReg(WRITE_REG + RX_PW_P1 , TX_DATA_WITDH);     // ½ÓÊÕÍ¨µÀ0Ñ¡ÔñºÍ·¢ËÍÍ¨µÀÏàÍ¬ÓÐÐ§Êý¾Ý¿í¶È
+ 185   1              NRFWriteReg(WRITE_REG + CONFIG, 0x0f);                 // CRCÊ¹ÄÜ£¬16Î»CRCÐ£Ñé£¬ÉÏµç  ½ÓÊÕÄ£Ê½
+ 186   1              NRFWriteReg(WRITE_REG + EN_RXADDR, 0x02);              // Ê¹ÄÜ½ÓÊÕÍ¨µÀ0   
+ 187   1              NRFWriteReg(WRITE_REG + EN_AA, 0x02);                  // Ê¹ÄÜ½ÓÊÕÍ¨µÀ0×Ô¶¯Ó¦´ð
+ 188   1              NRFWriteReg(WRITE_REG + RF_CH, 0x40);                  // Ñ¡ÔñÉäÆµÍ¨µÀ0x40  
+ 189   1              NRFWriteReg(WRITE_REG + RF_SETUP, 0x07);               // Êý¾Ý´«ÊäÂÊ1Mbps£¬·¢Éä¹¦ÂÊ0dBm£¬µÍÔëÉù·Å´óÆ÷ÔöÒæ
+ 190   1       
+ 191   1              CE = 1;
+ 192   1              Delay(5);//±£³Ö10usÃëÒÔÉÏ     
+ 193   1      }
+ 194           
+ 195          void GetDate()                                             //  ½ÓÊÕÊý¾Ý 
+ 196          {
+ 197   1          sta=NRFReadReg(READ_REG+STATUS);  //·¢ËÍÊý¾Ýºó¶ÁÈ¡×´Ì¬¼Ä´æÆ÷
+ 198   1          if(RX_DR)                                     // ÅÐ¶ÏÊÇ·ñ½ÓÊÕµ½Êý¾Ý£¬½Óµ½¾Í´ÓRXÈ¡³ö
+ 199   1           {
+ 200   2       
+ 201   2                 CE=0;                         //´ý»ú
+ 202   2       
+ 203   2                 NRFRead_Buf(RD_RX_PLOAD,RxData_Buf0,RX_DATA_WITDH) ;   // ´ÓRXFIFO¶ÁÈ¡Êý¾ÝÖ÷»úÊý¾Ý
+ 204   2      
+ 205   2                 buzzer=0;
+ 206   2                 Delay(100);
+ 207   2                 buzzer=1;
+ 208   2      
+ 209   2                 uart(*RxData_Buf0);          
+ 210   2       
+ 211   2                 NRFWriteReg(WRITE_REG+STATUS,0xff);              //½ÓÊÕµ½Êý¾ÝºóRX_DR,TX_DS,MAX_PT¶¼ÖÃ¸ßÎª1£¬Í¨¹ýÐ´1À´Ç
+             -å³þÖÐ¶Ï±êÖ¾
+ 212   2                 
+ 213   2                 CSN=0;
+ 214   2                 NRFSPI(FLUSH_RX);                                //ÓÃÓÚÇå¿ÕFIFO £¡£¡¹Ø¼ü£¡£¡²»È»»á³öÏÖÒâÏë²»µ½µÄºó¹û£¡
+             -£¡£¡´ó¼Ò¼Ç×¡£¡£¡ 
+ 215   2                 CSN=1;                
+ 216   2           
+ 217   2           }
+ 218   1                Shumaguan(*RxData_Buf0);
+ 219   1      } 
+ 220          
+ 221          
+ 222          /********************************************************* 
+ 223          *                                                                                                                *
+ 224          *                                                                                                                *
+ 225          ************NRFÉèÖÃÎª·¢ËÍÄ£Ê½²¢·¢ËÍÊý¾Ý*******************
+ 226          *                                                                                                                *
+ 227          *                                                                                                                *
+ 228          *********************************************************/
+ 229          
+ 230          void NRFSetTxMode(unsigned char *TxDate)                                                          //·¢ËÍÄ£Ê½
+ 231          {
+ 232   1          CE=0; 
+ 233   1              NRFWrite_Buf(WRITE_REG + TX_ADDR , Rx_Addr1, TX_ADDR_WITDH);    //Ð´¼Ä´æÆ÷Ö¸Áî+½ÓÊÕµØÖ·Ê¹ÄÜÖ¸Áî£¬½ÓÊÕµ
+             -ØÖ·£¬µØÖ·¿í¶È
+ 234   1              NRFWrite_Buf(WRITE_REG + RX_ADDR_P1 , Rx_Addr1 , TX_ADDR_WITDH); //ÎªÁËÓ¦´ð½ÓÊÕÉè±¸£¬½ÓÊÕÍ¨µÀ0µØÖ·ºÍ·¢ËÍµ
+             -ØÖ·ÏàÍ¬
+ 235   1              NRFWrite_Buf(WR_TX_PLOAD , TxDate , TX_DATA_WITDH);              //Ð´ÈëÊý¾Ý 
+C51 COMPILER V9.00   NRF24L01                                                              08/22/2015 15:12:09 PAGE 5   
+
+ 236   1      
+ 237   1       
+ 238   1              /******ÏÂÃæÓÐ¹Ø¼Ä´æÆ÷ÅäÖÃ**************/
+ 239   1              NRFWriteReg(WRITE_REG+EN_AA,0x02);       // Ê¹ÄÜ½ÓÊÕÍ¨µÀ0×Ô¶¯Ó¦´ð
+ 240   1              NRFWriteReg(WRITE_REG+EN_RXADDR,0x02);   // Ê¹ÄÜ½ÓÊÕÍ¨µÀ0
+ 241   1              NRFWriteReg(WRITE_REG+SETUP_RETR,0x0f);  // ×Ô¶¯ÖØ·¢ÑÓÊ±µÈ´ý****us£¬×Ô¶¯ÖØ·¢15´Î, 
+ 242   1              NRFWriteReg(WRITE_REG+RF_CH,0x40);       // Ñ¡ÔñÉäÆµÍ¨µÀ0x40
+ 243   1              NRFWriteReg(WRITE_REG+RF_SETUP,0x07);    // Êý¾Ý´«ÊäÂÊ1Mbps£¬·¢Éä¹¦ÂÊ0dBm£¬µÍÔëÉù·Å´óÆ÷ÔöÒæ
+ 244   1              NRFWriteReg(WRITE_REG+CONFIG,0x0f);      // CRCÊ¹ÄÜ£¬16Î»CRCÐ£Ñé£¬ÉÏµç  
+ 245   1              CE=1;
+ 246   1              Delay(5);//±£³Ö10usÃëÒÔÉÏ
+ 247   1      }
+ 248           
+ 249           
+ 250          unsigned char CheckACK()                                                                 //¼ì²âÓ¦´ðÐÅºÅ£¬ÓÃÓÚ·¢ÉäÄ£Ê½½ÓÊÕÓ¦´ðÐÅºÅ 
+ 251          {       
+ 252   1         
+ 253   1              sta = NRFReadReg(READ_REG+STATUS);                    // ·µ»Ø×´Ì¬¼Ä´æÆ÷
+ 254   1              if(TX_DS||MAX_RT)                                     //·¢ËÍÍê±ÏÖÐ¶Ï
+ 255   1              {
+ 256   2      
+ 257   2                 NRFWriteReg(WRITE_REG+STATUS,0xff);                // Çå³ýTX_DS»òMAX_RTÖÐ¶Ï±êÖ¾
+ 258   2      
+ 259   2                 CSN=0;
+ 260   2                 NRFSPI(FLUSH_TX);      //ÓÃÓÚÇå¿ÕFIFO £¡£¡¹Ø¼ü£¡£¡²»È»»á³öÏÖÒâÏë²»µ½µÄºó¹û£¡£¡£¡´ó¼Ò¼Ç×¡£¡£¡  
+ 261   2             CSN=1; 
+ 262   2      
+ 263   2                 return(0);
+ 264   2              }
+ 265   1              else
+ 266   1                 return(1);
+ 267   1      } 
+*** WARNING C290 IN LINE 59 OF NRF24L01.C: missing return value
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    417    ----
+   CONSTANT SIZE    =     10    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3      13
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

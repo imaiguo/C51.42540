@@ -1,0 +1,69 @@
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 12:24:28 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /****************BST-M51实验开发板例程*************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：防盗报警实验
+   4          *  公司：深圳市亚博软件开发有限公司       
+   5          *  日期：2015-7：
+   6          *  实验效果：拾起传感器时，发出蜂鸣声报警，并让灯闪烁
+   7          *************************************************/
+   8          #include<reg52.h>
+   9          
+  10          sbit switch0 = P2^1;
+  11          sbit beep=P2^3;
+  12          
+  13          void delay()               //大概0.5ms左右的延时
+  14          {
+  15   1              unsigned char a;
+  16   1              for(a=450;a>0;a--)
+  17   1              {
+  18   2              }
+  19   1      }
+  20          void main()
+  21          {
+  22   1              P1 = 0xff;
+  23   1              while(1)
+  24   1              {
+  25   2                      if(!switch0) //蜂鸣器以及led报警
+  26   2                      {
+  27   3                              unsigned int m;
+  28   3                              for(m=800;m>0;m--)        //持续时间0.5ms*800
+  29   3                              {
+  30   4                                      beep=~beep;
+  31   4              
+  32   4                                      delay();                 //2000HZ的信号。
+  33   4                              }
+  34   3                              P1=~P1;
+  35   3                              for(m=500;m>0;m--)       //持续时间0.5ms*2*500
+  36   3                              {
+  37   4                                      beep=~beep;     
+  38   4                                      delay();
+  39   4                                      delay();                //1000HZ的信号。
+  40   4                              }
+  41   3                              P1=~P1; 
+  42   3                      }
+  43   2              }
+  44   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     82    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 12:24:28 PAGE 2   
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,119 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        07/23/2015  11:41:47  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE main.obj TO LED13 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  main.obj (MAIN)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  LED13 (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         _DATA_GROUP_
+            IDATA   000AH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     005FH     UNIT         ?PR?MAIN?MAIN
+            CODE    0062H     000EH     UNIT         ?PR?_DELAY?MAIN
+            CODE    0070H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   LED13 (MAIN)
+
+
+SEGMENT                          DATA_GROUP 
+  +--> CALLED SEGMENT          START    LENGTH
+----------------------------------------------
+?C_C51STARTUP                  -----    -----
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                  0008H    0002H
+  +--> ?PR?_DELAY?MAIN
+
+
+
+SYMBOL TABLE OF MODULE:  LED13 (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  C:0003H         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+BL51 BANKED LINKER/LOCATER V6.22                                                      07/23/2015  11:41:47  PAGE 2
+
+
+  D:0088H         PUBLIC        TCON
+  D:00C8H         PUBLIC        T2CON
+  C:0066H         PUBLIC        _Delay
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        i
+  D:0009H         SYMBOL        temp
+  -------         ENDDO         
+  C:0003H         LINE#         17
+  C:0003H         LINE#         18
+  C:0003H         LINE#         23
+  C:0006H         LINE#         25
+  C:0006H         LINE#         26
+  C:0006H         LINE#         27
+  C:0009H         LINE#         28
+  C:000CH         LINE#         29
+  C:000FH         LINE#         31
+  C:000FH         LINE#         32
+  C:0012H         LINE#         34
+  C:0018H         LINE#         35
+  C:001BH         LINE#         36
+  C:001EH         LINE#         39
+  C:0027H         LINE#         41
+  C:002AH         LINE#         42
+  C:002DH         LINE#         43
+  C:0030H         LINE#         45
+  C:0030H         LINE#         46
+  C:0033H         LINE#         48
+  C:0039H         LINE#         49
+  C:003CH         LINE#         50
+  C:003FH         LINE#         51
+  C:0048H         LINE#         53
+  C:0052H         LINE#         55
+  C:0052H         LINE#         56
+  C:0055H         LINE#         57
+  C:0058H         LINE#         58
+  C:005BH         LINE#         59
+  C:005EH         LINE#         60
+  -------         ENDPROC       MAIN
+  C:0062H         SYMBOL        L?0018
+  -------         PROC          L?0017
+  -------         ENDPROC       L?0017
+  C:0062H         SYMBOL        L?0018
+  -------         PROC          _DELAY
+  D:0006H         SYMBOL        t
+  C:0066H         LINE#         68
+  C:0066H         LINE#         69
+  C:0066H         LINE#         70
+  C:006FH         LINE#         71
+  -------         ENDPROC       _DELAY
+  -------         ENDMOD        MAIN
+
+Program Size: data=11.0 xdata=0 code=124
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

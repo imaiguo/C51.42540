@@ -1,0 +1,112 @@
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 12:20:49 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：声音模块检测
+   4          *  公司：深圳市亚博软件开发有限公司       
+   5          *  日期：2015-7
+   6          *  晶振:11.0592MHZ
+   7          *  实验效果：有声音时，检测到，并让led1亮
+   8          *************************************************/
+   9          #include<reg52.h>
+  10          
+  11          sbit led1 = P1^0;//RED
+  12          sbit led2 = P1^1;//RED
+  13          sbit led3 = P1^2;//GREEN
+  14          sbit led4 = P1^3;//GREEN
+  15          sbit led5 = P1^4;//YELLOW
+  16          sbit led6 = P1^5;//YELLOW
+  17          sbit led7 = P1^6;//BLUE
+  18          sbit led8 = P1^7;//BLUE
+  19          
+  20          sbit voice = P2^0;
+  21          
+  22          unsigned long level = 0;
+  23          
+  24          void timer0_init()
+  25          {
+  26   1              TMOD = 0x01; //定时器0选择工作方式1
+  27   1          TH0 = 0xDC;  //设置初始值   10ms
+  28   1          TL0 = 0x00; 
+  29   1          EA = 1;                      //打开总中断
+  30   1          ET0 = 1;             //打开定时器0中断
+  31   1          TR0 = 1;             //启动定时器0
+  32   1      }
+  33          
+  34          void main()
+  35          {
+  36   1              P1 = 0xff;//熄灭所有led灯
+  37   1              timer0_init();
+  38   1              while(1)        //根据不同等级判断led灯亮
+  39   1              {
+  40   2                      if(voice == 0)
+  41   2                      {
+  42   3                              led1 = voice;
+  43   3                      }
+  44   2                      if((led1 == 0)&&(level >= 1))
+  45   2                      {
+  46   3                               led2 = 0;
+  47   3                      }
+  48   2                      if((led2 == 0)&&(level >= 2))
+  49   2                      {
+  50   3                               led3 = 0;
+  51   3                      }
+  52   2                      if((led3 == 0)&&(level >= 3))
+  53   2                      {
+  54   3                               led4 = 0;
+  55   3                      }
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 12:20:49 PAGE 2   
+
+  56   2                      if((led4 == 0)&&(level >= 4))
+  57   2                      {
+  58   3                               led5 = 0;
+  59   3                      }
+  60   2                      if((led5 == 0)&&(level >= 5))
+  61   2                      {
+  62   3                               led6 = 0;
+  63   3                      }
+  64   2                      if((led6 == 0)&&(level >= 6))
+  65   2                      {
+  66   3                               led7 = 0;
+  67   3                      }
+  68   2                      if((led7 == 0)&&(level >= 7))
+  69   2                      {
+  70   3                               led8 = 0;
+  71   3                      }
+  72   2                      if(level == 0)
+  73   2                      {
+  74   3                              P1 = 0xff;
+  75   3                      }
+  76   2              }
+  77   1      }
+  78          
+  79          void timer0() interrupt 1
+  80          {
+  81   1          TH0 = 0xDC;  //设置初始值  10ms
+  82   1          TL0 = 0x00; 
+  83   1              if(voice == 0) //每过10ms检测一次，如果还是有声音则上升等级
+  84   1                      level++;
+  85   1              else
+  86   1                      level = 0;
+  87   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    285    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,28 @@
+C51 COMPILER V9.00   DELAY                                                                 08/14/2015 04:05:08 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE DELAY
+OBJECT MODULE PLACED IN DELAY.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE DELAY.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include"reg52.h"
+   2          #include"nrf24l01.h"
+   3          #include"delay.h"
+*** ERROR C141 IN LINE 9 OF DELAY.H: syntax error near 't', expected ')'
+*** ERROR C141 IN LINE 10 OF DELAY.H: syntax error near 't', expected ')'
+   4          /**********************ÑÓÊ±º¯Êý**************************/
+   5          void NRFDelay(unint t)
+*** ERROR C141 IN LINE 5 OF DELAY.C: syntax error near 't', expected ')'
+   6          {
+   7   1         unint x,y;
+*** ERROR C141 IN LINE 7 OF DELAY.C: syntax error near 'x'
+*** ERROR C202 IN LINE 7 OF DELAY.C: 'x': undefined identifier
+   8   1         for(x=t;x>0;x--)
+*** ERROR C202 IN LINE 8 OF DELAY.C: 'x': undefined identifier
+   9   1          for(y=110;y>0;y--);
+*** ERROR C202 IN LINE 9 OF DELAY.C: 'y': undefined identifier
+  10   1      }
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  7 ERROR(S)

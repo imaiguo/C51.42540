@@ -1,0 +1,29 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+I:\亚博智能 MINI51开发套件资料\5、套件传感器模块\11.无线模块\2.nrf24l01一对多\从机1\congji1.uvproj
+Project File Date:  02/05/2015
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling nrf24l01.c...
+NRF24L01.C(59): warning C173: missing return-expression
+NRF24L01.C(59): warning C290: missing return value
+compiling main.c...
+MAIN.C(21): warning C206: 'uart_init': missing function-prototype
+compiling Delay.c...
+compiling uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_NRFSETTXMODE?NRF24L01
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CHECKACK?NRF24L01
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DDELAY?DELAY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAY_X_MS?DELAY
+Program Size: data=22.0 xdata=0 code=605
+creating hex file from "congji1"...
+"congji1" - 0 Error(s), 7 Warning(s).

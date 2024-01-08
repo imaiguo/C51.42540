@@ -1,0 +1,54 @@
+C51 COMPILER V9.00   MAIN                                                                  08/22/2015 15:11:01 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51ÊµÑé¿ª·¢°åÀý³Ì************************
+   2          *  Æ½Ì¨£ºBST-M51 + Keil U4 + STC89C52
+   3          *  Ãû³Æ£º24L01ÎÞÏß½ÓÊÕ£¨´Ó»ú0£©
+   4          *  ¹«Ë¾£ºÉîÛÚÊÐÑÇ²©Èí¼þ¿ª·¢ÓÐÏÞ¹«Ë¾       
+   5          *  ÈÕÆÚ£º2015-6
+   6          *  ¾§Õñ:11.0592MHZ
+   7          ******************************************************************/
+   8          #include<reg52.h>
+   9          #include"NRF24L01.h"  
+  10          #include"Delay.h"
+  11          
+  12          sbit led = P1^1 ;
+  13          
+  14          void main()
+  15          {
+  16   1      
+  17   1         unsigned int num=0 ;   
+  18   1         led = 1; 
+  19   1      
+  20   1         NRF24L01Int();  
+  21   1         uart_init();   
+*** WARNING C206 IN LINE 21 OF MAIN.C: 'uart_init': missing function-prototype
+  22   1        
+  23   1         
+  24   1         while(1)
+  25   1          {      
+  26   2                 NRFSetRXMode();   //ÉèÖÃÎª½ÓÊÕÄ£Ê½  
+  27   2                 GetDate();        //¿ªÊ¼½ÓÊÕÊý¾Ý £¬ÊµÊ±½ÓÊ
+  28   2              
+  29   2              }       
+  30   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     21    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

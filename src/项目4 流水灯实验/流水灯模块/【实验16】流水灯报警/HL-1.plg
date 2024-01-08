@@ -1,0 +1,15 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+I:\亚博智能 MINI51开发板光盘资料\5、单片机图文教程\3、板载模块学习方法\1、流水灯模块\【实验16】流水灯报警\LED16.uvproj
+Project File Date:  07/07/2015
+
+<h2>Output:</h2>
+Build target '目标 1'
+compiling main.c...
+linking...
+Program Size: data=13.0 xdata=0 code=60
+creating hex file from "LED16"...
+"LED16" - 0 Error(s), 0 Warning(s).

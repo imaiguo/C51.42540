@@ -1,0 +1,51 @@
+C51 COMPILER V9.00   MAIN                                                                  07/23/2015 11:12:37 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：流水灯模块实验
+   4          *  公司：深圳市亚博软件开发有限公司     
+   5          *  日期：2013-11
+   6          *  晶振:11.0592MHZ
+   7          *  说明：免费开源，不提供源代码分析.
+   8          ******************************************************************/
+   9          #include <reg52.h>     //包括一个52标准内核的头文件
+  10          /****************************IO口定义*****************************/
+  11          sbit P10 = P1^0;//要控制的LED灯
+  12          sbit P11 = P1^1;//要控制的LED灯
+  13          /******************************主函数*****************************/
+  14          void main (void){
+  15   1                        //此方法使用1个字节对单个端口赋值
+  16   1          P1 = 0xFF;    //P1口全部为高电平，对应的LED灯全灭掉，
+  17   1                        //ff换算成二进制是 1111 1111
+  18   1         
+  19   1          P1 = 0xfe;     //P1口的最低位点亮，可以更改数值是其他的灯点亮
+  20   1                        //0xfe是16进制，0x开头表示16进制数，
+  21   1                        //fe换算成二进制是 1111 1110 
+  22   1          while (1)         //主循环
+  23   1              {
+  24   2                        //主循环中添加其他需要一直工作的程序
+  25   2              }
+  26   1        }
+  27          
+  28          /*****************************************************************/
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =      8    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

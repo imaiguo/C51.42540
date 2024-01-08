@@ -1,0 +1,87 @@
+C51 COMPILER V9.00   MAIN                                                                  06/17/2015 09:11:32 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /************************************
+   2          *实验名：流水灯
+   3          *实验效果：流水灯（位输出）
+   4          *************************************/
+   5          #include<reg52.h>
+   6          #define uint unsigned int   //16  0-65535
+   7          #define on 0
+   8          #define off 1
+   9          
+  10          sbit led1 = P1^0;
+  11          sbit led2 = P1^1;
+  12          sbit led3 = P1^2;
+  13          sbit led4 = P1^3;
+  14          sbit led5 = P1^4;
+  15          sbit led6 = P1^5;
+  16          sbit led7 = P1^6;
+  17          sbit led8 = P1^7;
+  18          
+  19          void delay(uint xms)//延时x毫秒                         
+  20          {
+  21   1              uint i,j;
+  22   1              for(i=xms;i>0;i--)                    //i=xms即延时约xms毫秒
+  23   1                      for(j=112;j>0;j--);
+  24   1      }
+  25          
+  26          void main()
+  27          {
+  28   1              while(1)
+  29   1              {
+  30   2                       led1 = on;// P1^0 = 0;
+  31   2                       delay(200);//延时200毫秒
+  32   2                       led1 = off;
+  33   2      
+  34   2                       led2 = on;
+  35   2                       delay(200);//延时200毫秒
+  36   2                       led2 = off;
+  37   2      
+  38   2                       led3 = on;
+  39   2                       delay(200);//延时200毫秒
+  40   2                       led3 = off;
+  41   2      
+  42   2                       led4 = on;
+  43   2                       delay(200);//延时200毫秒
+  44   2                       led4 = off;
+  45   2      
+  46   2                       led5 = on;
+  47   2                       delay(200);//延时200毫秒
+  48   2                       led5 = off;
+  49   2      
+  50   2                       led6 = on;
+  51   2                       delay(200);//延时200毫秒
+  52   2                       led6 = off;
+  53   2      
+  54   2                       led7 = on;
+  55   2                       delay(200);//延时200毫秒
+C51 COMPILER V9.00   MAIN                                                                  06/17/2015 09:11:32 PAGE 2   
+
+  56   2                       led7 = off;
+  57   2      
+  58   2                       led8 = on;
+  59   2                       delay(200);//延时200毫秒
+  60   2                       led8 = off;
+  61   2              }
+  62   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     92    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

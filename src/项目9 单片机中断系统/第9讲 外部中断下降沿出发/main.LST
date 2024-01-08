@@ -1,0 +1,44 @@
+C51 COMPILER V9.00   MAIN                                                                  07/04/2015 13:25:22 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /******************************************
+   2          *实验名：外部中断实验（下降沿触发）
+   3          *实验效果：按下按键触发P3.3下降沿，让led灯
+   4          *                  在触发前后四位状态调换
+   5          ******************************************/
+   6          #include<reg52.h>
+   7          
+   8          void main()
+   9          {
+  10   1              P1 = 0x0f;// 0000 1111 下面四个灯亮 上面四个灯灭
+  11   1              EX1 = 1;//INT1中断允许
+  12   1              EA = 1;//全局中断打开
+  13   1              IT1 = 1;//触发方式为下降沿触发
+  14   1              while(1);
+  15   1      }
+  16          
+  17          void jump_low()  interrupt 2
+  18          {
+  19   1              P1 = ~P1;
+  20   1      }
+  21          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     15    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

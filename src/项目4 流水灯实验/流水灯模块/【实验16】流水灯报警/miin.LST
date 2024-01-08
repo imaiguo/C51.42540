@@ -1,0 +1,52 @@
+C51 COMPILER V8.06   MIIN                                                                  11/20/2011 17:38:35 PAGE 1   
+
+
+C51 COMPILER V8.06, COMPILATION OF MODULE MIIN
+OBJECT MODULE PLACED IN miin.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE miin.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          //实验平台：HL-1 V6.1+Keil U3
+   2          //开发公司：慧净电子WWW.HLMCU.COM
+   3          //淘宝店铺：http://shop37031453.taobao.com
+   4          //实验目的：流水灯
+   5          #include <reg51.h>
+   6          #include <intrins.h>
+   7          unsigned char a,b,k,j;
+   8          sbit beep=P2^3;
+   9          void delay10ms()
+  10            {
+  11   1          for(a=100;a>0;a--)
+  12   1            for(b=225;b>0;b--);
+  13   1         }
+  14          void main()
+  15          {
+  16   1        k=0xfe;
+  17   1        while(1)
+  18   1        {
+  19   2            delay10ms();
+  20   2            
+  21   2            beep=0;
+  22   2            delay10ms();
+  23   2            beep=1;
+  24   2            j=_crol_(k,1);
+  25   2            k=j;
+  26   2            P1=j;
+  27   2         }
+  28   1      }
+  29          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     45    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,78 @@
+C51 COMPILER V9.00   KEYSCAN                                                               08/22/2015 15:14:20 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE KEYSCAN
+OBJECT MODULE PLACED IN keyscan.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE keyscan.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：按键扫描
+   4          *  公司：深圳市亚博软件开发有限公司       
+   5          *  日期：2015-8
+   6          *  晶振:11.0592MHZ
+   7          ******************************************************************/
+   8          #include<reg51.h>
+   9          #include<allhead.h>
+  10          
+  11          unsigned char keyscan()
+  12          {
+  13   1          static unsigned char temp,key;
+  14   1      
+  15   1              ///////////////第四列扫描///////////////////
+  16   1              P3 &= 0xfe;//1111 1110 让P3.0口输出低
+  17   1              temp=P3;
+  18   1              temp=temp&0xf0;//1111 0000      位与操作 屏蔽后四位
+  19   1              if(temp!=0xf0)
+  20   1              {
+  21   2                  delayMs(10);//消抖
+  22   2                      temp=P3;
+  23   2                      temp=temp&0xf0;
+  24   2                      if(temp!=0xf0)
+  25   2                      {
+  26   3                          temp=P3;
+  27   3                              switch(temp)
+  28   3                              {
+  29   4                                case 0x7e:       //1110 1110 "A"被按下
+  30   4                                     key=level1;
+  31   4                                         break;
+  32   4                                case 0xbe:              //1101 1110  "B"被按下
+  33   4                                         key=level2;
+  34   4                                         break;
+  35   4                                case 0xde:              //1011 1110  "C"被按下
+  36   4                                         key=level3;
+  37   4                                         break;
+  38   4                                case 0xee:              //0111 1110  "D"被按下
+  39   4                                         key=turnoff;
+  40   4                                         break;
+  41   4                              }
+  42   3                              while(temp!=0xf0)
+  43   3                              {
+  44   4                                  temp=P3;
+  45   4                                      temp=temp&0xf0;
+  46   4                              }
+  47   3                              return key;  
+  48   3                      }               
+  49   2              }
+  50   1              else 
+  51   1              return nokey;
+  52   1      }
+*** WARNING C291 IN LINE 52 OF KEYSCAN.C: not every exit path returns a value
+
+
+C51 COMPILER V9.00   KEYSCAN                                                               08/22/2015 15:14:20 PAGE 2   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     93    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

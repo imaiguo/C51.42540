@@ -1,0 +1,7 @@
+"18b20.obj",
+"delay.obj",
+"keyscan.obj",
+"lcd1602.obj",
+"main.obj",
+"adda.obj" 
+TO "smartfan" 

@@ -1,0 +1,183 @@
+C51 COMPILER V9.00   MIAN                                                                  10/23/2015 07:50:25 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MIAN
+OBJECT MODULE PLACED IN mian.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE mian.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：秒表
+   4          *  公司：深圳市亚博软件开发有限公司      
+   5          *  日期：2015-6
+   6          *  晶振:11.0592MHZ
+   7          *  说明：免费开源，不提供源代码分析.
+   8          ******************************************************************/
+   9          
+  10          //注意晶振需为11.0592M。
+  11          //若为其他数值晶振，请改变TH0与TL0参数值，否则计时会有很大误差 。
+  12          
+  13          #include<reg51.h>
+  14          
+  15          #define uchar unsigned char
+  16          
+  17          #define dula P0         //段选信号的锁存器控制
+  18          #define wela P2         //位选信号的锁存器控制,这里只用到P2.4-P2.7
+  19          
+  20          sbit k4 = P3^6;//红色按键k4
+  21          sbit k5 = P3^7;//红色按键k5
+  22          sbit beep = P2^3;//蜂鸣器
+  23          
+  24          bit stop = 1;
+  25          unsigned char j,k,num0,num1,num2,num3,sec,min,count=0;
+  26          unsigned char time_count;
+  27          unsigned char code weitable[]={0x8f,0x4f,0x2f,0x1f};
+  28          //数码管各位的码表
+  29          unsigned char code table[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,
+  30                                  0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71};
+  31          //数码管各位的码表(带上小点)
+  32          unsigned char code table1[]={0xbf,0x86,0xdb,0xcf,0xe6,0xed,0xfd,
+  33                                  0x87,0xff,0xef};
+  34          void delay(unsigned char i)
+  35          {
+  36   1        for(j=i;j>0;j--)
+  37   1          for(k=125;k>0;k--);
+  38   1      }
+  39          
+  40          void display1(uchar wei,uchar shu)//在任意一位显示任意的数字
+  41          {
+  42   1         wei=wei-1;
+  43   1         wela|=0xf0;//给P2.4-P2.7置1
+  44   1         if(wei == 2)
+  45   1              P0=table1[shu];
+  46   1         else
+  47   1          P0=table[shu];
+  48   1         wela=wela&weitable[wei];//给P2需要显示的那一位置1，其他置0
+  49   1         delay(5);
+  50   1      }
+  51          void display(unsigned char a,unsigned char b,unsigned char c,unsigned char d)
+  52          {                                                 //一次显示4个数字，且每位显示数字可自定。
+  53   1         display1(4,a);
+  54   1         display1(3,b);
+  55   1         display1(2,c);
+C51 COMPILER V9.00   MIAN                                                                  10/23/2015 07:50:25 PAGE 2   
+
+  56   1         display1(1,d);
+  57   1      }
+  58          
+  59          void start_timer()
+  60          {
+  61   1              ET0=1;                   //开定时器0中断
+  62   1              EA=1;                    //开总中断
+  63   1              TR0=1;                   //打开定时器
+  64   1      }
+  65          
+  66          void stop_timer()
+  67          {
+  68   1              ET0=0;                   //关定时器0中断
+  69   1              EA=0;                    //关总中断
+  70   1              TR0=0;                   //关闭定时器
+  71   1      }
+  72          
+  73          void main()
+  74          {
+  75   1              TMOD=0x01;               //模式设置，00000001，可见采用的是定时器0，工作与模式1（M1=0，M0=1）。
+  76   1              TH0=(65536-46080)/256;// 由于晶振为11.0592,故所记次数应为46080，计时器每隔50000微秒发起一次中断。
+  77   1              TL0=(65536-46080)%256;//46080的来历，为50000*11.0592/12
+  78   1              while(1)
+  79   1              {
+  80   2                      if(k4 == 0)//判断是否有按下按键的信号
+  81   2                      {
+  82   3                              delay(10);//延时10ms 消抖
+  83   3                              if(k4 == 0)//再次判断按键是否被按下
+  84   3                              {
+  85   4                                      while(k4 == 0);//直到按键判断松开
+  86   4                                      {
+  87   5                                              if(stop)
+  88   5                                                      start_timer();                   //打开定时器
+  89   5                                              else    
+  90   5                                                      stop_timer();                    //关闭定时器
+  91   5                                              stop = ~stop;
+  92   5                                              beep = 1;
+  93   5                                              P1 = 0xff;
+  94   5                                      }
+  95   4                              }
+  96   3                      }
+  97   2                      else if(k5 == 0)//判断是否有按下按键的信号
+  98   2                      {
+  99   3                              delay(10);//延时10ms 消抖
+ 100   3                              if(k5 == 0)//再次判断按键是否被按下
+ 101   3                              {
+ 102   4                                      while(k5 == 0);//直到按键判断松开
+ 103   4                                      {       
+ 104   5                                              stop_timer();                    //关闭定时器
+ 105   5                                              stop = 1;
+ 106   5                                              beep = 1;
+ 107   5                                              P1 = 0xff;
+ 108   5                                              count = 0;
+ 109   5                                              time_count = 0;
+ 110   5                                              sec = 0;                          //计时清零
+ 111   5                                              min = 0;
+ 112   5                                      }
+ 113   4                              }
+ 114   3                      }
+ 115   2      
+ 116   2                      if(stop)
+ 117   2                      {
+C51 COMPILER V9.00   MIAN                                                                  10/23/2015 07:50:25 PAGE 3   
+
+ 118   3                              count++;
+ 119   3                              if(count == 100)
+ 120   3                              {
+ 121   4                                      P1 = ~P1;
+ 122   4                                      count = 0;
+ 123   4                              }
+ 124   3                      }
+ 125   2                      else if(time_count==20)//计数20次0.05秒为一秒
+ 126   2                      {
+ 127   3                              count = 0;
+ 128   3                              time_count=0;
+ 129   3                              sec++;
+ 130   3                              if(sec==60)
+ 131   3                              {
+ 132   4                                      sec=0;     //若到了60s，则归零
+ 133   4                                      min++;
+ 134   4                              }
+ 135   3                              if(min==60)
+ 136   3                              {
+ 137   4                                      min=0;     //若到了60min，则归零
+ 138   4                              }
+ 139   3                              beep = 0;
+ 140   3                              delay(10);
+ 141   3                              beep = 1;
+ 142   3                      }
+ 143   2                      num0=sec%10;              //取出当前描述的个位与十位
+ 144   2                      num1=sec/10;
+ 145   2                      num2=min%10;              //取出当前描述的个位与十位
+ 146   2                      num3=min/10;
+ 147   2                      display(num3,num2,num1,num0);      //显示
+ 148   2              }
+ 149   1      }
+ 150          
+ 151          void timer0() interrupt 1
+ 152          {
+ 153   1              TH0=(65536-46080)/256;
+ 154   1              TL0=(65536-46080)%256;
+ 155   1              time_count++;
+ 156   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    287    ----
+   CONSTANT SIZE    =     30    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     10       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

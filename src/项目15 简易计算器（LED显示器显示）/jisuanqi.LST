@@ -1,0 +1,422 @@
+C51 COMPILER V9.00   JISUANQI                                                              08/22/2015 11:41:19 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE JISUANQI
+OBJECT MODULE PLACED IN jisuanqi.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE jisuanqi.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /**********************BST-M51实验开发板例程************************
+   2          *  平台：BST-M51 + Keil U4 + STC89C52
+   3          *  名称：计算器 
+   4          *  公司：深圳市亚博软件开发有限公司     
+   5          *  日期：2015-7
+   6          *  晶振:11.0592MHZ
+   7          *  说明：免费开源，不提供源代码分析.
+   8          ******************************************************************
+   9                                                                  按键说明
+  10                                          键盘上数字0--9的输入            #：清零
+  11                                          A：加   B：减  C：除    D：等于 
+  12          程序功能：      本程序为简易计算器。可以算整数且正数类型的运算。
+  13          ******************************************************************/
+  14          #include<reg51.h>
+  15          
+  16          #define dula P0         //段选信号的锁存器控制
+  17          #define wela P2         //位选信号的锁存器控制,这里只用到P2.4-P2.7
+  18          
+  19          unsigned char temp,key=0,wei=0,i,j,k,keydown=0;
+  20          unsigned char jia=0,jian=0,cheng=0,chu=0,jia0=0,jian0=0,cheng0=0,chu0=0,dengyu=0,qingling=0;
+  21          unsigned char s0=16,s1=16,s2=16,s3=16; //参加运算的各个位
+  22          unsigned long qian = 0,hou = 0;//定义参于运算的第一个数和第二个数。
+  23          
+  24          unsigned char code table[]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,
+  25                                  0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71,0x00,0x40};
+  26          unsigned char code weitable[]={0x8f,0x4f,0x2f,0x1f};
+  27                                                          //数码管各位的码表
+  28          void delay(unsigned char i)
+  29          {
+  30   1              for(j=i;j>0;j--)
+  31   1              for(k=125;k>0;k--);
+  32   1      }
+  33          void display1(unsigned char wei,unsigned char shu)//在任意一位显示任意的数字
+  34          {
+  35   1         wei=wei-1;
+  36   1         wela|=0xf0;//给P2.4-P2.7置1
+  37   1         P0=table[shu];
+  38   1         wela=wela&weitable[wei];//给P2需要显示的那一位置1，其他置0
+  39   1         delay(5);
+  40   1      }
+  41          void display(unsigned char a,unsigned char b,unsigned char c,unsigned char d)
+  42          {                                                 //一次显示4个数字，且每位显示数字可自定。
+  43   1         display1(4,a);
+  44   1         display1(3,b);
+  45   1         display1(2,c);
+  46   1         display1(1,d);
+  47   1      }
+  48          
+  49          void keyscan4x4()
+  50          {
+  51   1          unsigned char temp;
+  52   1      
+  53   1      
+  54   1              ///////////////第一行扫描///////////////////
+  55   1              P3=0xfe;//1111 1110 让P3.0口输出低
+C51 COMPILER V9.00   JISUANQI                                                              08/22/2015 11:41:19 PAGE 2   
+
+  56   1              temp=P3;
+  57   1              temp=temp&0xf0;//1111 0000      位与操作 屏蔽后四位
+  58   1              if(temp!=0xf0)
+  59   1              {
+  60   2                  delay(10);
+  61   2                      temp=P3;
+  62   2                      temp=temp&0xf0;
+  63   2                      if(temp!=0xf0)
+  64   2                      {
+  65   3                          temp=P3;
+  66   3                              switch(temp)
+  67   3                              {
+  68   4                                case 0xee:       //1110 1110 "1"被按下
+  69   4                                     key=1;
+  70   4                                         break;
+  71   4                                case 0xde:              //1101 1110  "2"被按下
+  72   4                                         key=2;
+  73   4                                         break;
+  74   4                                case 0xbe:              //1011 1110  "3"被按下
+  75   4                                         key=3;
+  76   4                                         break;
+  77   4                                case 0x7e:              //0111 1110  "A"被按下
+  78   4                                         {key=10;jia=1;jian=0;cheng=0;chu=0;}
+  79   4                                         break;
+  80   4                              }
+  81   3                              while(temp!=0xf0)
+  82   3                              {
+  83   4                                  temp=P3;
+  84   4                                      temp=temp&0xf0;
+  85   4                              }
+  86   3                              //display(key);
+  87   3                              keydown=1;
+  88   3                              wei++;
+  89   3                      }
+  90   2              }
+  91   1                              ///////////////第二行扫描///////////////////
+  92   1              P3=0xfd;//1111 1101 让P3.1口输出低
+  93   1              temp=P3;
+  94   1              temp=temp&0xf0;//1111 0000      位与操作 屏蔽后四位
+  95   1              if(temp!=0xf0)
+  96   1              {
+  97   2                  delay(10);
+  98   2                      temp=P3;
+  99   2                      temp=temp&0xf0;
+ 100   2                      if(temp!=0xf0)
+ 101   2                      {
+ 102   3                          temp=P3;
+ 103   3                              switch(temp)
+ 104   3                              {
+ 105   4                                case 0xed:       //1110 1101 "4"被按下
+ 106   4                                     key=4;
+ 107   4                                         break;
+ 108   4                                case 0xdd:              //1101 1101  "5"被按下
+ 109   4                                         key=5;
+ 110   4                                         break;
+ 111   4                                case 0xbd:              //1011 1101  "6"被按下
+ 112   4                                         key=6;
+ 113   4                                         break;
+ 114   4                                case 0x7d:              //0111 1101  "B"被按下
+ 115   4                                         {key=11;jia=0;jian=1;cheng=0;chu=0;}
+ 116   4                                         break;
+ 117   4                              }
+C51 COMPILER V9.00   JISUANQI                                                              08/22/2015 11:41:19 PAGE 3   
+
+ 118   3                              while(temp!=0xf0)
+ 119   3                              {
+ 120   4                                  temp=P3;
+ 121   4                                      temp=temp&0xf0;
+ 122   4                              }
+ 123   3                              //display(key);
+ 124   3                              keydown=1;
+ 125   3                              wei++;
+ 126   3                      }
+ 127   2               }
+ 128   1                              ///////////////第三行扫描///////////////////
+ 129   1              P3=0xfb;//1111 1011 让P3.2口输出低
+ 130   1              temp=P3;
+ 131   1              temp=temp&0xf0;//1111 0000      位与操作 屏蔽后四位
+ 132   1              if(temp!=0xf0)
+ 133   1              {
+ 134   2                  delay(10);
+ 135   2                      temp=P3;
+ 136   2                      temp=temp&0xf0;
+ 137   2                      if(temp!=0xf0)
+ 138   2                      {
+ 139   3                          temp=P3;
+ 140   3                              switch(temp)
+ 141   3                              {
+ 142   4                                case 0xeb:       //1110 1011 "7"被按下
+ 143   4                                     key=7;
+ 144   4                                         break;
+ 145   4                                case 0xdb:              //1101 1011  "8"被按下
+ 146   4                                         key=8;
+ 147   4                                         break;
+ 148   4                                case 0xbb:              //1011 1011  "9"被按下
+ 149   4                                         key=9;
+ 150   4                                         break;
+ 151   4                                case 0x7b:              //0111 1011  "C"被按下
+ 152   4                                         {key=12;jia=0;jian=0;cheng=0;chu=1;}
+ 153   4                                         break;
+ 154   4                              }
+ 155   3                              while(temp!=0xf0)
+ 156   3                              {
+ 157   4                                  temp=P3;
+ 158   4                                      temp=temp&0xf0;
+ 159   4                              }
+ 160   3                              //display(key);
+ 161   3                              keydown=1;
+ 162   3                              wei++;
+ 163   3                        }
+ 164   2                      }
+ 165   1      
+ 166   1                              ///////////////第四行扫描///////////////////
+ 167   1              P3=0xf7;//1111 0111 让P3.0口输出低
+ 168   1              temp=P3;
+ 169   1              temp=temp&0xf0;//1111 0000      位与操作 屏蔽后四位
+ 170   1              if(temp!=0xf0)
+ 171   1              {
+ 172   2                  delay(10);
+ 173   2                      temp=P3;
+ 174   2                      temp=temp&0xf0;
+ 175   2                      if(temp!=0xf0)
+ 176   2                      {
+ 177   3                          temp=P3;
+ 178   3                              switch(temp)
+ 179   3                              {
+C51 COMPILER V9.00   JISUANQI                                                              08/22/2015 11:41:19 PAGE 4   
+
+ 180   4                                case 0xe7:       //1110 0111 "*"被按下
+ 181   4                                     {key=14;jia=0;jian=0;cheng=1;chu=0;}
+ 182   4                                         break;
+ 183   4                                case 0xd7:              //1101 0111  "0"被按下
+ 184   4                                         key=0;
+ 185   4                                         break;
+ 186   4                                case 0xb7:              //1011 0111  "#"被按下
+ 187   4                                         {key=15;qingling=1;}
+ 188   4                                         break;
+ 189   4                                case 0x77:              //0111 0111  "D"被按下
+ 190   4                                         {key=13;dengyu =1;}
+ 191   4                                         break;
+ 192   4                              }
+ 193   3                              while(temp!=0xf0)
+ 194   3                              {
+ 195   4                                  temp=P3;
+ 196   4                                      temp=temp&0xf0;
+ 197   4                              }
+ 198   3                              //display(key);
+ 199   3                              keydown=1;
+ 200   3                              wei++;
+ 201   3                       }
+ 202   2               }
+ 203   1      
+ 204   1      }
+ 205          
+ 206          void main()
+ 207          {       
+ 208   1              unsigned char gongneng = 0,yunsuan = 0,yunsuan0 = 0;
+ 209   1              wei = 0;
+ 210   1      
+ 211   1              while(1)
+ 212   1              {
+ 213   2                      keyscan4x4();
+ 214   2                      gongneng=jia|jian|cheng|chu|jia0|jian0|cheng0|chu0|dengyu|qingling;
+ 215   2                      if(gongneng==0)
+ 216   2                      {               
+ 217   3                              if((!keydown)&&(!wei))
+ 218   3                              {
+ 219   4                                 s0=16;s1=16;s2=16;s3=16;
+ 220   4                                 qian = 0;
+ 221   4                              }
+ 222   3                              if((keydown)&&(key<10))
+ 223   3                              {
+ 224   4                                      if(wei == 1)
+ 225   4                                      {s3=key;qian=s3;}
+ 226   4                                      else if(wei == 2)
+ 227   4                                      {
+ 228   5                                              s2=s3;
+ 229   5                                              s3=key;
+ 230   5                                              qian=s2*10+s3;
+ 231   5                                      }
+ 232   4                                      else if(wei == 3)
+ 233   4                                      {
+ 234   5                                              s1=s2;
+ 235   5                                              s2=s3;
+ 236   5                                              s3=key;
+ 237   5                                              qian=s1*100+s2*10+s3;
+ 238   5                                      }
+ 239   4                                      else if(wei == 4)
+ 240   4                                      {       
+ 241   5                                              s0=s1;
+C51 COMPILER V9.00   JISUANQI                                                              08/22/2015 11:41:19 PAGE 5   
+
+ 242   5                                              s1=s2;
+ 243   5                                              s2=s3;
+ 244   5                                              s3=key;
+ 245   5                                              qian=s0*1000+s1*100+s2*10+s3;
+ 246   5                                      }
+ 247   4                                      keydown = 0;
+ 248   4                              }       
+ 249   3                      }
+ 250   2                      else
+ 251   2                      {       
+ 252   3                              yunsuan=jia|jian|cheng|chu;
+ 253   3                              yunsuan0=jia0|jian0|cheng0|chu0;
+ 254   3                              
+ 255   3                              if((yunsuan)&&(key > 9)&&(!yunsuan0)&&(!hou))
+ 256   3                              {
+ 257   4                                      wei = 0;
+ 258   4                                      keydown = 0;
+ 259   4                                      s0=16;s1=16;s2=16;s3=16;
+ 260   4                                      if(jia)
+ 261   4                                      {
+ 262   5                                              jia=0;  jia0=1;jian0=0;cheng0=0;chu0=0;
+ 263   5                                      }
+ 264   4                                      if(jian)
+ 265   4                                      {
+ 266   5                                              jian=0;jia0=0;jian0=1;cheng0=0;chu0=0;
+ 267   5                                      }
+ 268   4                                      if(cheng)
+ 269   4                                      {
+ 270   5                                              cheng=0;jia0=0;jian0=0;cheng0=1;chu0=0;
+ 271   5                                      }
+ 272   4                                      if(chu)
+ 273   4                                      {
+ 274   5                                              chu=0;  jia0=0;jian0=0;cheng0=0;chu0=1;
+ 275   5                                      }
+ 276   4                              }
+ 277   3                              else if((yunsuan)&&(key > 9)&&(!yunsuan0))
+ 278   3                              {
+ 279   4                                      wei = 0;
+ 280   4                                      keydown = 0;
+ 281   4                                      if(jia)
+ 282   4                                      {
+ 283   5                                              jia=0;  jia0=1;jian0=0;cheng0=0;chu0=0;
+ 284   5                                      }
+ 285   4                                      if(jian)
+ 286   4                                      {
+ 287   5                                              jian=0;jia0=0;jian0=1;cheng0=0;chu0=0;
+ 288   5                                      }
+ 289   4                                      if(cheng)
+ 290   4                                      {
+ 291   5                                              cheng=0;jia0=0;jian0=0;cheng0=1;chu0=0;
+ 292   5                                      }
+ 293   4                                      if(chu)
+ 294   4                                      {
+ 295   5                                              chu=0;  jia0=0;jian0=0;cheng0=0;chu0=1;
+ 296   5                                      }
+ 297   4                                      dengyu = 0;
+ 298   4                              }
+ 299   3                              else if(((yunsuan)&&(key > 9)&&(yunsuan0))||(dengyu))
+ 300   3                              {
+ 301   4                                      if(jia0)
+ 302   4                                      {
+ 303   5                                              hou=qian+hou;
+C51 COMPILER V9.00   JISUANQI                                                              08/22/2015 11:41:19 PAGE 6   
+
+ 304   5                                              jia0=0;
+ 305   5                                      }
+ 306   4                                      if(jian0)
+ 307   4                                      {
+ 308   5                                              hou=qian-hou;
+ 309   5                                              jian0=0;
+ 310   5                                      }
+ 311   4                                      if(cheng0)
+ 312   4                                      {
+ 313   5                                              hou=qian*hou;
+ 314   5                                              cheng0=0;
+ 315   5                                      }
+ 316   4                                      if(chu0)
+ 317   4                                      {
+ 318   5                                              hou=qian/hou;
+ 319   5                                              chu0=0;
+ 320   5                                      }
+ 321   4      
+ 322   4                                      if((hou < 0)||(hou > 10000))
+ 323   4                                      {s3=17;s2=17;s1=17;s0=17;hou=0;}
+ 324   4                                      else if(hou<10)
+ 325   4                                      {s3=hou;s2=16;s1=16;s0=16;}
+ 326   4                                      else if(hou<100)
+ 327   4                                      {s3=hou%10;s2=hou/10;s1=16;s0=16;}
+ 328   4                                      else if(hou<1000)
+ 329   4                                      {s3=hou%100%10;s2=hou%100/10;s1=hou/100;s0=16;}
+ 330   4                                      else if(hou<10000)
+ 331   4                                      {s3=hou%1000%100%10;s2=hou%1000%100/10;s1=hou%1000/100;s0=hou/1000;}
+ 332   4                                      qian = hou;
+ 333   4                                      wei = 0;
+ 334   4                                      keydown = 0;
+ 335   4                              }
+ 336   3                              else if((yunsuan0)&&(key < 10))
+ 337   3                              {       
+ 338   4                                      if((!keydown)&&(!wei))
+ 339   4                                      {
+ 340   5                                         s0=16;s1=16;s2=16;s3=16;
+ 341   5                                         hou = 0;
+ 342   5                                      }
+ 343   4                                      if(keydown)
+ 344   4                                      {
+ 345   5                                              if(wei == 1)
+ 346   5                                              {
+ 347   6                                                      s0=16;s1=16;s2=16;s3=16;
+ 348   6                                                      s3=key;hou=s3;
+ 349   6                                              }
+ 350   5                                              else if(wei == 2)
+ 351   5                                              {
+ 352   6                                                      s2=s3;
+ 353   6                                                      s3=key;
+ 354   6                                                      hou=s2*10+s3;
+ 355   6                                              }
+ 356   5                                              else if(wei == 3)
+ 357   5                                              {
+ 358   6                                                      s1=s2;
+ 359   6                                                      s2=s3;
+ 360   6                                                      s3=key;
+ 361   6                                                      hou=s1*100+s2*10+s3;
+ 362   6                                              }
+ 363   5                                              else if(wei == 4)
+ 364   5                                              {       
+ 365   6                                                      s0=s1;
+C51 COMPILER V9.00   JISUANQI                                                              08/22/2015 11:41:19 PAGE 7   
+
+ 366   6                                                      s1=s2;
+ 367   6                                                      s2=s3;
+ 368   6                                                      s3=key;
+ 369   6                                                      hou=s0*1000+s1*100+s2*10+s3;
+ 370   6                                              }
+ 371   5                                              keydown = 0;
+ 372   5                                      }
+ 373   4                              }
+ 374   3      
+ 375   3                              if(qingling)
+ 376   3                              {
+ 377   4                                      s0=16;s1=16;s2=16;s3=16;
+ 378   4                                      jia=0;jian=0;cheng=0;chu=0;
+ 379   4                                      jia0=0;jian0=0;cheng0=0;chu0=0;
+ 380   4                                      qingling=0;dengyu=0;wei=0;
+ 381   4                                      qian=0;hou=0;
+ 382   4                              }                       
+ 383   3                      }
+ 384   2                      display(s0,s1,s2,s3);
+ 385   2              }
+ 386   1      
+ 387   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1913    ----
+   CONSTANT SIZE    =     22    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     29       8
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

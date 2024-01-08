@@ -1,0 +1,56 @@
+C51 COMPILER V9.00   MAIN                                                                  07/06/2015 03:55:41 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE main.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /*************************************************
+   2          *实验名：独立键盘输入
+   3          *实验效果：按下第1个独立按键K1 松开按键后 
+   4                     第一个led灯改变状态
+   5          *************************************************/
+   6          #include<reg52.h>
+   7          
+   8          sbit led1 = P1^0;
+   9          sbit k1 = P3^4;
+  10          
+  11          void delay(unsigned int xms)                            
+  12          {
+  13   1              unsigned int i,j;
+  14   1              for(i=xms;i>0;i--)                    //i=xms即延时约xms毫秒
+  15   1                      for(j=112;j>0;j--);
+  16   1      }
+  17          
+  18          void main()
+  19          {
+  20   1              P1 = 0xff;//熄灭所有led灯
+  21   1              while(1)
+  22   1              {
+  23   2                      if(k1 == 0)//判断是否有按下按键的信号
+  24   2                      {
+  25   3                              delay(10);//延时10ms 消抖
+  26   3                              if(k1 == 0)//再次判断按键是否被按下
+  27   3                              {
+  28   4                                      while(k1 == 0);//直到按键判断松开
+  29   4                                      led1 = ~led1;//松开后执行程序 翻转led灯
+  30   4                              }
+  31   3                      }
+  32   2              }
+  33   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     53    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
